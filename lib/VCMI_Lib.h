@@ -9,7 +9,7 @@
  */
 #pragma once
 
-#include "Services.h"
+#include <vcmi/Services.h>
 
 class CConsoleHandler;
 class CArtHandler;
@@ -43,9 +43,10 @@ class DLL_LINKAGE LibClasses : public Services
 public:
 	bool IS_AI_ENABLED; //unused?
 
+	const ArtifactService * artifactService() const override;
 	const CreatureService * creatureService() const override;
 	const scripting::Service * scriptingService() const override;
-	const spells::SpellService * spellService() const override;
+	const spells::Service * spellService() const override;
 
 	const spells::effects::Registry * spellEffects() const override;
 	spells::effects::Registry * spellEffects() override;

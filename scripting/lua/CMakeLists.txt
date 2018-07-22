@@ -5,9 +5,18 @@ set(lib_SRCS
 		LuaScriptModule.cpp
 		LuaScriptingContext.cpp
 		LuaSpellEffect.cpp
+		LuaStack.cpp
 
+		api/battle/UnitProxy.cpp
+
+		api/BattleCb.cpp
+		api/BattleServerCb.cpp
+		api/GameCb.cpp
 		api/Registry.cpp
 		api/ServerCb.cpp
+
+		api/netpacks/BattleLogMessage.cpp
+		api/netpacks/BattleStackMoved.cpp
 		api/netpacks/InfoWindow.cpp
 )
 
