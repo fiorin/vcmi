@@ -1,6 +1,7 @@
 require("battle.Unit")
 
 local BattleLogMessage = require("netpacks.BattleLogMessage")
+local BattleUnitsChanged = require("netpacks.BattleUnitsChanged")
 
 local battle = BATTLE
 
@@ -116,6 +117,52 @@ BU.M = function(self, x, ...)
 
 	if argc == 1 then
 		return BU_M(x, ...)
+	end
+end
+
+local BU_S = function(x, typ, count, hex, side, slot)
+	local pack = BattleUnitsChanged.new()
+
+	local id = battle:getNextUnitId()
+
+	pack:add(id,
+	{
+		newUnitInfo =
+		{
+			["count"] = count,
+			["type"] = typ,
+			["side"] = side,
+			["position"] = hex,
+			["summoned"] = (slot == -1),
+		}
+	})
+
+	BATTLESERVER:changeUnits(pack)
+end
+
+BU.S = function(self, x, ...)
+	local argc = select('#', ...)
+
+	if argc >= 5 then
+		return BU_S(x, ...)
+	end
+end
+
+local BU_T = function(x)
+	local tacticDistance = battle:getTacticDistance()
+
+	if tacticDistance == 0 then
+		return 0
+	else
+		return 1
+	end
+end
+
+BU.T = function(self, x, ...)
+	local argc = select('#', ...)
+
+	if argc == 1 then
+		return BU_T(x, ...)
 	end
 end
 

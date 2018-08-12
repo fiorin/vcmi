@@ -18,30 +18,17 @@
 #include "../battle/BattleHex.h"
 #include "../HeroBonus.h"
 
-namespace spells
-{
-	class ISpellMechanicsFactory;
-	class IBattleCast;
-}
-
-class CGObjectInstance;
 class CSpell;
 class IAdventureSpellMechanics;
-class CLegacyConfigParser;
-class CGHeroInstance;
-class CStack;
 class CBattleInfoCallback;
-class BattleInfo;
-struct CPackForClient;
-struct BattleSpellCast;
-class CGameInfoCallback;
-class CRandomGenerator;
-class CMap;
 class AdventureSpellCastParameters;
 class SpellCastEnvironment;
 
 namespace spells
 {
+
+class ISpellMechanicsFactory;
+class IBattleCast;
 
 struct SchoolInfo
 {

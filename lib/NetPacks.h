@@ -1633,7 +1633,6 @@ struct BattleSpellCast : public CPackForClient
 	si32 casterStack;// -1 if not cated by creature, >=0 caster stack ID
 	bool castByHero; //if true - spell has been cast by hero, otherwise by a creature
 
-	std::vector<MetaString> battleLog;
 	template <typename Handler> void serialize(Handler &h, const int version)
 	{
 		h & side;
@@ -1644,7 +1643,6 @@ struct BattleSpellCast : public CPackForClient
 		h & affectedCres;
 		h & casterStack;
 		h & castByHero;
-		h & battleLog;
 		h & activeCast;
 	}
 };

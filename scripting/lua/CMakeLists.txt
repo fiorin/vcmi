@@ -17,6 +17,7 @@ set(lib_SRCS
 
 		api/netpacks/BattleLogMessage.cpp
 		api/netpacks/BattleStackMoved.cpp
+		api/netpacks/BattleUnitsChanged.cpp
 		api/netpacks/InfoWindow.cpp
 )
 

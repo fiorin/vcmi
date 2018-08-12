@@ -3955,13 +3955,6 @@ bool CGameHandler::makeBattleAction(BattleAction &ba)
 
 			int difference = defence.totalValue() - oldDefenceValue;
 
-			MetaString text;
-			stack->addText(text, MetaString::GENERAL_TXT, 120);
-			stack->addNameReplacement(text);
-			text.addReplacement(difference);
-
-			sse.battleLog.push_back(text);
-
 			std::vector<Bonus> buffer;
 			buffer.push_back(bonus1);
 			buffer.push_back(bonus2);
@@ -3969,6 +3962,16 @@ bool CGameHandler::makeBattleAction(BattleAction &ba)
 			sse.toUpdate.push_back(std::make_pair(ba.stackNumber, buffer));
 			sendAndApply(&sse);
 
+			BattleLogMessage message;
+
+			MetaString text;
+			stack->addText(text, MetaString::GENERAL_TXT, 120);
+			stack->addNameReplacement(text);
+			text.addReplacement(difference);
+
+			message.lines.push_back(text);
+
+			sendAndApply(&message);
 			//don't break - we share code with next case
 		}
 		FALLTHROUGH

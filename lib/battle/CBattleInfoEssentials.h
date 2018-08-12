@@ -61,18 +61,19 @@ public:
 	 *
 	 */
 	TStacks battleGetStacksIf(TStackFilter predicate) const; //deprecated
-	battle::Units battleGetUnitsIf(battle::UnitFilter predicate) const;
+	battle::Units battleGetUnitsIf(battle::UnitFilter predicate) const override;
 
-	const battle::Unit * battleGetUnitByID(uint32_t ID) const;
-	const battle::Unit * battleActiveUnit() const;
+	const battle::Unit * battleGetUnitByID(uint32_t ID) const override;
+	const battle::Unit * battleActiveUnit() const override;
 
-	uint32_t battleNextUnitId() const;
+	uint32_t battleNextUnitId() const override;
 
 	bool battleHasNativeStack(ui8 side) const;
 	const CGTownInstance * battleGetDefendedTown() const; //returns defended town if current battle is a siege, nullptr instead
 
-	si8 battleTacticDist() const; //returns tactic distance in current tactics phase; 0 if not in tactics phase
-	si8 battleGetTacticsSide() const; //returns which side is in tactics phase, undefined if none (?)
+	si8 battleTacticDist() const override; //returns tactic distance in current tactics phase; 0 if not in tactics phase
+	si8 battleGetTacticsSide() const override; //returns which side is in tactics phase, undefined if none (?)
+
 	bool battleCanFlee(PlayerColor player) const;
 	bool battleCanSurrender(PlayerColor player) const;
 

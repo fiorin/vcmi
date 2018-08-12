@@ -28,6 +28,14 @@ const std::vector<BattleCbProxy::RegType> BattleCbProxy::REGISTER =
 		&BattleCbProxy::getBattlefieldType
 	},
 	{
+		"getNextUnitId",
+		&BattleCbProxy::getNextUnitId
+	},
+	{
+		"getTacticDistance",
+		&BattleCbProxy::getTacticDistance
+	},
+	{
 		"getTerrainType",
 		&BattleCbProxy::getTerrainType
 	},
@@ -47,6 +55,16 @@ int BattleCbProxy::getBattlefieldType(lua_State * L, const BattleCb * object)
 	auto ret = object->battleGetBattlefieldType();
 	S.push(static_cast<si32>(ret.num));
 	return 1;
+}
+
+int BattleCbProxy::getNextUnitId(lua_State * L, const BattleCb * object)
+{
+	return LuaCallWrapper<const BattleCb>::wrap(L, object, &BattleCb::battleNextUnitId);
+}
+
+int BattleCbProxy::getTacticDistance(lua_State * L, const BattleCb * object)
+{
+	return LuaCallWrapper<const BattleCb>::wrap(L, object, &BattleCb::battleTacticDist);
 }
 
 int BattleCbProxy::getTerrainType(lua_State * L, const BattleCb * object)
@@ -77,9 +95,7 @@ int BattleCbProxy::getUnitByPos(lua_State * L, const BattleCb * object)
 
 int BattleCbProxy::isFinished(lua_State * L, const BattleCb * object)
 {
-	LuaStack S(L);
-	S.push(object->battleIsFinished());
-	return 1;
+	return LuaCallWrapper<const BattleCb>::wrap(L, object, &BattleCb::battleIsFinished);
 }
 
 }

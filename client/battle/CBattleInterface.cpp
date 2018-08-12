@@ -1348,9 +1348,6 @@ void CBattleInterface::spellCast(const BattleSpellCast * sc)
 			displayEffect(elem.effect, stack->getPosition());
 	}
 
-	//displaying message in console
-	displayBattleLog(sc->battleLog);
-
 	waitForAnims();
 	//mana absorption
 	if (sc->manaGained > 0)

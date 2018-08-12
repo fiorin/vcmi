@@ -14,6 +14,8 @@
 
 #include "api/Registry.h"
 
+class JsonNode;
+
 namespace scripting
 {
 
@@ -90,6 +92,8 @@ public:
 		value = *(static_cast<std::shared_ptr<T> *>(raw));
 		return true;
 	}
+
+	bool tryGet(int position, JsonNode & value);
 
 	int retNil();
 	int retVoid();

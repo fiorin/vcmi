@@ -10,6 +10,7 @@
 #include "StdInc.h"
 
 #include "../scripting/ScriptFixture.h"
+#include "../JsonComparer.h"
 
 #include "../../lib/NetPacks.h"
 
@@ -186,14 +187,11 @@ TEST_F(ERM_BU_M, Simple)
 	source << "VERM" << std::endl;
 	source << "!?FU1;" << std::endl;
 	source << "!!BU:M^Test 1^;" << std::endl;
-	source << "!?FU2;" << std::endl;
-	source << "!!VRz3:S^Test 2^;" << std::endl;
-	source << "!!BU:Mz3;" << std::endl;
 
 	loadScript(VLC->scriptHandler->erm, source.str());
 	run();
 
-	auto checkApply1 = [&](BattleLogMessage * pack)
+	auto checkApply = [&](BattleLogMessage * pack)
 	{
 		EXPECT_EQ(pack->lines.size(), 1);
 
@@ -201,21 +199,9 @@ TEST_F(ERM_BU_M, Simple)
 			EXPECT_EQ(pack->lines[0].toString(), "Test 1");
 	};
 
-	EXPECT_CALL(battleApplierMock, apply(Matcher<BattleLogMessage *>(_))).WillOnce(Invoke(checkApply1));
+	EXPECT_CALL(battleApplierMock, apply(Matcher<BattleLogMessage *>(_))).WillOnce(Invoke(checkApply));
 
 	context->callGlobal(&battleApplierMock, "FU1", JsonNode());
-
-	auto checkApply2 = [&](BattleLogMessage * pack)
-	{
-		EXPECT_EQ(pack->lines.size(), 1);
-
-		if(!pack->lines.empty())
-			EXPECT_EQ(pack->lines[0].toString(), "Test 2");
-	};
-
-	EXPECT_CALL(battleApplierMock, apply(Matcher<BattleLogMessage *>(_))).WillOnce(Invoke(checkApply2));
-
-	context->callGlobal(&battleApplierMock, "FU2", JsonNode());
 }
 
 class ERM_BU_O : public ERM_BU
@@ -233,10 +219,87 @@ class ERM_BU_S : public ERM_BU
 
 };
 
+TEST_F(ERM_BU_S, Summon)
+{
+	const uint32_t UNIT_ID = 42;
+
+	std::stringstream source;
+	source << "VERM" << std::endl;
+	source << "!?FU1;" << std::endl;
+	source << "!!BU:S^core:angel^/10/59/0/-1/0;" << std::endl;
+
+	loadScript(VLC->scriptHandler->erm, source.str());
+	run();
+
+	auto checkApply = [&](BattleUnitsChanged * pack)
+	{
+		EXPECT_TRUE(pack->battleLog.empty());
+		EXPECT_TRUE(pack->customEffects.empty());
+		EXPECT_EQ(pack->changedStacks.size(), 1);
+
+		if(!pack->changedStacks.empty())
+		{
+			UnitChanges & unit = pack->changedStacks.front();
+			EXPECT_EQ(unit.id, UNIT_ID);
+			EXPECT_EQ(unit.operation, BattleChanges::EOperation::ADD);
+
+			JsonNode expected;
+			expected["newUnitInfo"]["count"].Float() = 10;
+			expected["newUnitInfo"]["type"].String() = "core:angel";
+			expected["newUnitInfo"]["side"].Float() = 0;
+			expected["newUnitInfo"]["position"].Float() = 59;
+			expected["newUnitInfo"]["summoned"].Bool() = true;
+
+			JsonComparer c(false);
+			c.compare("newUnitInfo", unit.data, expected);
+		}
+	};
+
+	EXPECT_CALL(binfoMock, battleNextUnitId()).WillOnce(Return(UNIT_ID));
+	EXPECT_CALL(battleApplierMock, apply(Matcher<BattleUnitsChanged *>(_))).WillOnce(Invoke(checkApply));
+
+	context->callGlobal(&battleApplierMock, "FU1", JsonNode());
+}
+
 class ERM_BU_T : public ERM_BU
 {
 
 };
+
+TEST_F(ERM_BU_T, NoTactics)
+{
+	std::stringstream source;
+	source << "VERM" << std::endl;
+	source << "!?PI;" << std::endl;
+	source << "!!BU:T?v2;" << std::endl;
+
+	loadScript(VLC->scriptHandler->erm, source.str());
+
+	EXPECT_CALL(binfoMock, battleTacticDist()).WillOnce(Return(0));
+
+	run();
+
+	JsonNode actualState = context->saveState();
+	EXPECT_EQ(actualState["ERM"]["v"]["2"], JsonUtils::floatNode(0)) << actualState.toJson(true);
+}
+
+TEST_F(ERM_BU_T, Tactics)
+{
+	std::stringstream source;
+	source << "VERM" << std::endl;
+	source << "!?PI;" << std::endl;
+	source << "!!BU:T?v2;" << std::endl;
+
+	loadScript(VLC->scriptHandler->erm, source.str());
+
+	EXPECT_CALL(binfoMock, battleTacticDist()).WillOnce(Return(4));
+
+	run();
+
+	JsonNode actualState = context->saveState();
+
+	EXPECT_EQ(actualState["ERM"]["v"]["2"], JsonUtils::floatNode(1)) << actualState.toJson(true);
+}
 
 class ERM_BU_V : public ERM_BU
 {

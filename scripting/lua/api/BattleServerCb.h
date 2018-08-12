@@ -29,7 +29,6 @@ public:
 
 	template<typename NetPack>
 	static int apply(lua_State * L, ServerBattleCb * object);
-
 };
 
 }

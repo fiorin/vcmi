@@ -93,6 +93,8 @@
 		<Unit filename="api/netpacks/BattleLogMessage.h" />
 		<Unit filename="api/netpacks/BattleStackMoved.cpp" />
 		<Unit filename="api/netpacks/BattleStackMoved.h" />
+		<Unit filename="api/netpacks/BattleUnitsChanged.cpp" />
+		<Unit filename="api/netpacks/BattleUnitsChanged.h" />
 		<Unit filename="api/netpacks/InfoWindow.cpp" />
 		<Unit filename="api/netpacks/InfoWindow.h" />
 		<Unit filename="api/netpacks/PackForClient.h" />

@@ -32,6 +32,10 @@ const std::vector<BattleServerCbProxy::RegType> BattleServerCbProxy::REGISTER =
 	{
 		"moveUnit",
 		&BattleServerCbProxy::apply<BattleStackMoved>
+	},
+	{
+		"changeUnits",
+		&BattleServerCbProxy::apply<BattleUnitsChanged>
 	}
 };
 

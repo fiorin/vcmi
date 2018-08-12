@@ -295,6 +295,8 @@ void BattleSpellMechanics::cast(const PacketSender * server, vstd::RNG & rng, co
 
 	beforeCast(sc, rng, target);
 
+	BattleLogMessage castDescription;
+
 	switch (mode)
 	{
 	case Mode::CREATURE_ACTIVE:
@@ -305,7 +307,7 @@ void BattleSpellMechanics::cast(const PacketSender * server, vstd::RNG & rng, co
 			MetaString line;
 			caster->getCastDescription(owner, affectedUnits, line);
 			if(!line.message.empty())
-				sc.battleLog.push_back(line);
+				castDescription.lines.push_back(line);
 		}
 		break;
 
@@ -317,6 +319,9 @@ void BattleSpellMechanics::cast(const PacketSender * server, vstd::RNG & rng, co
 
 	for(auto & unit : affectedUnits)
 		sc.affectedCres.insert(unit->unitId());
+
+	if(!castDescription.lines.empty())
+		server->sendAndApply(&castDescription);
 
 	server->sendAndApply(&sc);
 

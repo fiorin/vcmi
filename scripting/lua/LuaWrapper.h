@@ -25,10 +25,21 @@
 namespace scripting
 {
 
+namespace detail
+{
+	template<typename T>
+	struct RegType
+	{
+		const char * name;
+		int(* functor)(lua_State *, T);
+	};
+}
+
 template<class T, class U = T> class OpaqueWrapper
 {
 public:
 	using Object = T *;
+	using RegType = detail::RegType<Object>;
 
 	static int registrator(lua_State * L, api::TypeRegistry * typeRegistry)
 	{
@@ -71,19 +82,13 @@ public:
 
 		return 0;
 	}
-
-	struct RegType
-	{
-		const char * name;
-		int(* functor)(lua_State *, Object);
-	};
-
 };
 
 template<class T, class U = T> class SharedWrapper
 {
 public:
 	using Object = std::shared_ptr<T>;
+	using RegType = detail::RegType<Object>;
 
 	static int registrator(lua_State * L, api::TypeRegistry * typeRegistry)
 	{
@@ -180,12 +185,6 @@ public:
 
 		return 0;
 	}
-
-	struct RegType
-	{
-		const char * name;
-		int(* functor)(lua_State *, Object);
-	};
 };
 
 }
